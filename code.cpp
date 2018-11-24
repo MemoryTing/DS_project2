@@ -157,6 +157,11 @@ using namespace std;
 			}
 		}
 	 }
+	 fout << step << endl;
+	 for(int i=0 ; i<step ; i++){
+		 fout << step_x[i] << ' ';
+		 fout << step_y[i] << endl; 
+	 }
 	 fin.close();
      fout.close();
      return 0;
