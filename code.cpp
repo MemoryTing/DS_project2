@@ -4,6 +4,27 @@
 
 using namespace std;
 
+int B_x , B_y , r , c , step;
+char map[r][c];
+vector<int> step_x;
+vector<int> step_y;
+void back_to_R(int x , int y)
+{
+	int n=step_x.size()-1;
+	while(1){
+		if(x == B_x && y == B_y) break;
+		else {
+			step_x.push_back(step_x[n]);
+			step_y.push_back(step_y[n]);
+			step++;
+			n--;
+		}
+	}
+	step_x.push_back(B_x);
+	step_y.push_back(B_y);
+	return;
+}	
+
  int main(int argc , char *argv[])
  {
      ifstream fin;
@@ -18,14 +39,11 @@ using namespace std;
      fin.open(in_com);
      fout.open(out_com);
 	 
-	 int B_x , B_y , B_dir;
-	 int r , c , B , step=0;
+	 int b;
+	 int B;
 	 int direction=0;
 	 int need_clear=0;
-	 vector<int> step_x;
-	 vector<int> step_y;
 	 fin >> r >> c >> B;
-	 char map[r][c];
 	 for (int i=0 ; i<=r+1 ; i++){
 		for (int j=0 ; j<=c+1 ; j++){
 			if(i==0 || j == 0 || i==r+1 || j == c+1) map[i][j] = 1;
@@ -47,7 +65,15 @@ using namespace std;
 	 int now_y = B_y;
 	 bool wall_at_right = false;
 	 bool no_wall = false;
+	 b = B;
+	 step = 0;
 	 while(need_clear>0){
+		if(b < B/2+1){
+			back_to_R(now_x , now_y);
+			now_x = B_x;
+			now_y = B_y;
+			b = B;
+		}
 		if(now_x == B_x && now_y == B_y){
 			if(map[now_x-1][now_y] == '0'){
 				if(map[now_x][now_y+1] == '1') {
@@ -60,48 +86,58 @@ using namespace std;
 					no_wall = true;
 				}
 				now_x = now_x-1;
-				B_dir = 0;
+				map[now_x][now_y] = '2';
+				if(step == 0) B_x = B_x-1;
 				step_x.push_back(atoi(now_x));
 				step_y.push_back(atoi(now_y));
 				step++;
+				b--;
 				need_clear--;
 			}
 			else if(map[now_x][now_y-1] == '0'){
 				direction = 0;
 				wall_at_right = true;
 				now_y = now_y-1;
-				B_dir = 1;
+				map[now_x][now_y] = '2';
+				if(step == 0) B_y = B_y-1;
 				step_x.push_back(atoi(now_x));
 				step_y.push_back(atoi(now_y));
 				step++;
+				b--;
 				need_clear--;
 			}
 			else if(map[now_x][now_y+1] == '0'){
 				direction = 0;
 				now_y = now_y+1;
-				B_dir = 2;
+				map[now_x][now_y] = '2';
+				if(step == 0) B_y = B_y+1;
 				step_x.push_back(atoi(now_x));
 				step_y.push_back(atoi(now_y));
 				step++;
+				b--;
 				need_clear--;
 			}
 			else {
 				direction = 1;
 				wall_at_right = true;
 				now_x = now_x+1;
-				B_dir = 3;
+				map[now_x][now_y] = '2';
+				if(step == 0) B_x = B_x+1;
 				step_x.push_back(atoi(now_x));
 				step_y.push_back(atoi(now_y));
 				step++;
+				b--;
 				need_clear--;
 			}
+		}
 		if(direction == 0){  //Up
 			if(map[now_x-1][now_y] == '0'){
 				now_x = now_x-1;
-				map[now_x][now_y] = 2;
+				map[now_x][now_y] = '2';
 				step_x.push_back(atoi(now_x));
 				step_y.push_back(atoi(now_y));
 				step++;
+				b--;
 				need_clear--;
 			}
 			else {
@@ -117,10 +153,11 @@ using namespace std;
 		else if(direction == 1){ //Left
 			if(map[now_x][now_y-1] == '0'){
 				now_y = now_y-1;
-				map[now_x][now_y] = 2;
+				map[now_x][now_y] = '2';
 				step_x.push_back(atoi(now_x));
 				step_y.push_back(atoi(now_y));
 				step++;
+				b--;
 				need_clear--;
 			}
 			else {
@@ -131,10 +168,11 @@ using namespace std;
 		else if(direction == 2){ //Right
 			if(map[now_x][now_y+1] == '0'){
 				now_y = now_y+1;
-				map[now_x][now_y] = 2;
+				map[now_x][now_y] = '2';
 				step_x.push_back(atoi(now_x));
 				step_y.push_back(atoi(now_y));
 				step++;
+				b--;
 				need_clear--;
 			}
 			else {
@@ -145,10 +183,11 @@ using namespace std;
 		else { //Down
 			if(map[now_x+1][now_y] == '0'){
 				now_x = now_x+1;
-				map[now_x][now_y] = 2;
+				map[now_x][now_y] = '2';
 				step_x.push_back(atoi(now_x));
 				step_y.push_back(atoi(now_y));
 				step++;
+				b--;
 				need_clear--;
 			}
 			else {
