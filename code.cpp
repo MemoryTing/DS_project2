@@ -19,7 +19,7 @@ using namespace std;
      fout.open(out_com);
 	 
 	 int B_x , B_y , B_dir;
-	 int r , c , B;
+	 int r , c , B , step=0;
 	 int direction=0;
 	 int need_clear=0;
 	 vector<int> step_x;
@@ -63,6 +63,8 @@ using namespace std;
 				B_dir = 0;
 				step_x.push_back(atoi(now_x));
 				step_y.push_back(atoi(now_y));
+				step++;
+				need_clear--;
 			}
 			else if(map[now_x][now_y-1] == '0'){
 				direction = 0;
@@ -71,6 +73,8 @@ using namespace std;
 				B_dir = 1;
 				step_x.push_back(atoi(now_x));
 				step_y.push_back(atoi(now_y));
+				step++;
+				need_clear--;
 			}
 			else if(map[now_x][now_y+1] == '0'){
 				direction = 0;
@@ -78,6 +82,8 @@ using namespace std;
 				B_dir = 2;
 				step_x.push_back(atoi(now_x));
 				step_y.push_back(atoi(now_y));
+				step++;
+				need_clear--;
 			}
 			else {
 				direction = 1;
@@ -86,6 +92,8 @@ using namespace std;
 				B_dir = 3;
 				step_x.push_back(atoi(now_x));
 				step_y.push_back(atoi(now_y));
+				step++;
+				need_clear--;
 			}
 		if(direction == 0){  //Up
 			if(map[now_x-1][now_y] == '0'){
@@ -93,6 +101,7 @@ using namespace std;
 				map[now_x][now_y] = 2;
 				step_x.push_back(atoi(now_x));
 				step_y.push_back(atoi(now_y));
+				step++;
 				need_clear--;
 			}
 			else {
@@ -111,6 +120,7 @@ using namespace std;
 				map[now_x][now_y] = 2;
 				step_x.push_back(atoi(now_x));
 				step_y.push_back(atoi(now_y));
+				step++;
 				need_clear--;
 			}
 			else {
@@ -124,6 +134,7 @@ using namespace std;
 				map[now_x][now_y] = 2;
 				step_x.push_back(atoi(now_x));
 				step_y.push_back(atoi(now_y));
+				step++;
 				need_clear--;
 			}
 			else {
@@ -137,6 +148,7 @@ using namespace std;
 				map[now_x][now_y] = 2;
 				step_x.push_back(atoi(now_x));
 				step_y.push_back(atoi(now_y));
+				step++;
 				need_clear--;
 			}
 			else {
