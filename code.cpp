@@ -18,7 +18,7 @@ using namespace std;
      fin.open(in_com);
      fout.open(out_com);
 	 
-	 int B_x , B_y;
+	 int B_x , B_y , B_dir;
 	 int r , c , B;
 	 int direction=0;
 	 int need_clear=0;
@@ -28,7 +28,7 @@ using namespace std;
 	 char map[r][c];
 	 for (int i=0 ; i<=r+1 ; i++){
 		for (int j=0 ; j<=c+1 ; j++){
-			if(i==0 || j == 0 || i==r+1 || j == c+1) map[i][j] = 3;
+			if(i==0 || j == 0 || i==r+1 || j == c+1) map[i][j] = 1;
 			else {
 				fin >> map[i][j];
 				if(map[i][j] == 'R'){
@@ -45,25 +45,104 @@ using namespace std;
 	 step_y.clear();
 	 int now_x = B_x;
 	 int now_y = B_y;
+	 bool wall_at_right = false;
+	 bool no_wall = false;
 	 while(need_clear>0){
 		if(now_x == B_x && now_y == B_y){
-			if()
+			if(map[now_x-1][now_y] == '0'){
+				if(map[now_x][now_y+1] == '1') {
+					direction = 2;
+					wall_at_right = true;
+				}
+				else if(map[now_x][now_y-1] == '1') direction = 1;
+				else {
+					direction = 0;
+					no_wall = true;
+				}
+				now_x = now_x-1;
+				B_dir = 0;
+				step_x.push_back(atoi(now_x));
+				step_y.push_back(atoi(now_y));
+			}
+			else if(map[now_x][now_y-1] == '0'){
+				direction = 0;
+				wall_at_right = true;
+				now_y = now_y-1;
+				B_dir = 1;
+				step_x.push_back(atoi(now_x));
+				step_y.push_back(atoi(now_y));
+			}
+			else if(map[now_x][now_y+1] == '0'){
+				direction = 0;
+				now_y = now_y+1;
+				B_dir = 2;
+				step_x.push_back(atoi(now_x));
+				step_y.push_back(atoi(now_y));
+			}
+			else {
+				direction = 1;
+				wall_at_right = true;
+				now_x = now_x+1;
+				B_dir = 3;
+				step_x.push_back(atoi(now_x));
+				step_y.push_back(atoi(now_y));
+			}
 		if(direction == 0){  //Up
 			if(map[now_x-1][now_y] == '0'){
-				if(map[now])
 				now_x = now_x-1;
 				map[now_x][now_y] = 2;
+				step_x.push_back(atoi(now_x));
+				step_y.push_back(atoi(now_y));
 				need_clear--;
 			}
-			else if(map[now_x-1][now_y] == '1'|| map[now_x-1][now_y] == '2'){
-				direction = 1;
+			else {
+				if(wall_at_right) direction = 1;
+				else if (no_wall){
+					direction = 1;
+					no_wall = false;
+					wall_at_right = true;
+				}
+				else direction = 2;
+			}
 		}
 		else if(direction == 1){ //Left
-			
+			if(map[now_x][now_y-1] == '0'){
+				now_y = now_y-1;
+				map[now_x][now_y] = 2;
+				step_x.push_back(atoi(now_x));
+				step_y.push_back(atoi(now_y));
+				need_clear--;
+			}
+			else {
+				if(wall_at_right) direction = 3;
+				else direction = 0;
+			}
 		}
 		else if(direction == 2){ //Right
+			if(map[now_x][now_y+1] == '0'){
+				now_y = now_y+1;
+				map[now_x][now_y] = 2;
+				step_x.push_back(atoi(now_x));
+				step_y.push_back(atoi(now_y));
+				need_clear--;
+			}
+			else {
+				if(wall_at_right) direction = 0;
+				else direction = 3;
+			}
 		}
 		else { //Down
+			if(map[now_x+1][now_y] == '0'){
+				now_x = now_x+1;
+				map[now_x][now_y] = 2;
+				step_x.push_back(atoi(now_x));
+				step_y.push_back(atoi(now_y));
+				need_clear--;
+			}
+			else {
+				if(wall_at_right) direction = 2;
+				else direction = 1;
+			}
 		}
 	 }
 	 fin.close();
