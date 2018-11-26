@@ -5,7 +5,6 @@
 using namespace std;
 
 int B_x , B_y , r , c , step;
-char map[r][c];
 vector<int> step_x;
 vector<int> step_y;
 void back_to_R(int x , int y)
@@ -44,6 +43,7 @@ void back_to_R(int x , int y)
 	 int direction=0;
 	 int need_clear=0;
 	 fin >> r >> c >> B;
+	 char map[r][c];
 	 for (int i=0 ; i<=r+1 ; i++){
 		for (int j=0 ; j<=c+1 ; j++){
 			if(i==0 || j == 0 || i==r+1 || j == c+1) map[i][j] = 1;
@@ -67,7 +67,7 @@ void back_to_R(int x , int y)
 	 bool no_wall = false;
 	 b = B;
 	 step = 0;
-	 while(need_clear>0){
+	 //while(need_clear>0){
 		if(b < B/2+1){
 			back_to_R(now_x , now_y);
 			now_x = B_x;
@@ -88,8 +88,8 @@ void back_to_R(int x , int y)
 				now_x = now_x-1;
 				map[now_x][now_y] = '2';
 				if(step == 0) B_x = B_x-1;
-				step_x.push_back(atoi(now_x));
-				step_y.push_back(atoi(now_y));
+				step_x.push_back(now_x);
+				step_y.push_back(now_y);
 				step++;
 				b--;
 				need_clear--;
@@ -100,8 +100,8 @@ void back_to_R(int x , int y)
 				now_y = now_y-1;
 				map[now_x][now_y] = '2';
 				if(step == 0) B_y = B_y-1;
-				step_x.push_back(atoi(now_x));
-				step_y.push_back(atoi(now_y));
+				step_x.push_back(now_x);
+				step_y.push_back(now_y);
 				step++;
 				b--;
 				need_clear--;
@@ -111,8 +111,8 @@ void back_to_R(int x , int y)
 				now_y = now_y+1;
 				map[now_x][now_y] = '2';
 				if(step == 0) B_y = B_y+1;
-				step_x.push_back(atoi(now_x));
-				step_y.push_back(atoi(now_y));
+				step_x.push_back(now_x);
+				step_y.push_back(now_y);
 				step++;
 				b--;
 				need_clear--;
@@ -123,8 +123,8 @@ void back_to_R(int x , int y)
 				now_x = now_x+1;
 				map[now_x][now_y] = '2';
 				if(step == 0) B_x = B_x+1;
-				step_x.push_back(atoi(now_x));
-				step_y.push_back(atoi(now_y));
+				step_x.push_back(now_x);
+				step_y.push_back(now_y);
 				step++;
 				b--;
 				need_clear--;
@@ -134,11 +134,17 @@ void back_to_R(int x , int y)
 			if(map[now_x-1][now_y] == '0'){
 				now_x = now_x-1;
 				map[now_x][now_y] = '2';
-				step_x.push_back(atoi(now_x));
-				step_y.push_back(atoi(now_y));
+				step_x.push_back(now_x);
+				step_y.push_back(now_y);
 				step++;
 				b--;
 				need_clear--;
+				if(wall_at_right) {
+					if(map[now_x][now_y+1] == '0') direction = 2;
+				}
+				else if(!no_wall){
+					if(map[now_x][now_y-1] == '0') direction = 1;
+				}
 			}
 			else {
 				if(wall_at_right) direction = 1;
@@ -154,11 +160,17 @@ void back_to_R(int x , int y)
 			if(map[now_x][now_y-1] == '0'){
 				now_y = now_y-1;
 				map[now_x][now_y] = '2';
-				step_x.push_back(atoi(now_x));
-				step_y.push_back(atoi(now_y));
+				step_x.push_back(now_x);
+				step_y.push_back(now_y);
 				step++;
 				b--;
 				need_clear--;
+				if(wall_at_right) {
+					if(map[now_x-1][now_y] == '0') direction = 1;
+				}
+				else {
+					if(map[now_x+1][now_y] == '0') direction = 3;
+				}
 			}
 			else {
 				if(wall_at_right) direction = 3;
@@ -169,11 +181,17 @@ void back_to_R(int x , int y)
 			if(map[now_x][now_y+1] == '0'){
 				now_y = now_y+1;
 				map[now_x][now_y] = '2';
-				step_x.push_back(atoi(now_x));
-				step_y.push_back(atoi(now_y));
+				step_x.push_back(now_x);
+				step_y.push_back(now_y);
 				step++;
 				b--;
 				need_clear--;
+				if(wall_at_right) {
+					if(map[now_x+1][now_y] == '0') direction = 3;
+				}
+				else {
+					if(map[now_x-1][now_y] == '0') direction = 1;
+				}
 			}
 			else {
 				if(wall_at_right) direction = 0;
@@ -184,18 +202,23 @@ void back_to_R(int x , int y)
 			if(map[now_x+1][now_y] == '0'){
 				now_x = now_x+1;
 				map[now_x][now_y] = '2';
-				step_x.push_back(atoi(now_x));
-				step_y.push_back(atoi(now_y));
+				step_x.push_back(now_x);
+				step_y.push_back(now_y);
 				step++;
 				b--;
 				need_clear--;
+				if(wall_at_right) {
+					if(map[now_x][now_y-1] == '0') direction = 1;
+				}
+				else {
+					if(map[now_x][now_y+1] == '0') direction = 2;
+				}
 			}
 			else {
 				if(wall_at_right) direction = 2;
 				else direction = 1;
 			}
 		}
-	 }
 	 fout << step << endl;
 	 for(int i=0 ; i<step ; i++){
 		 fout << step_x[i] << ' ';
