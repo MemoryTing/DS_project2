@@ -2,7 +2,6 @@
 #include<fstream>
 #include<vector>
 #include<queue>
-#include<set>
 
 using namespace std;
 
@@ -19,7 +18,16 @@ vector<int> step_y;
 vector<struct vec> fi;
 vector<int> go_back;
 queue<int> temp;
-set<vec> opened;
+vector<struct vec> opened;
+
+bool check(vec A)
+{
+	int i=0;
+	while(i < opened.size()){
+		if(opened[i].x == A.x && opened[i].y == A.y) return true;
+	}
+	return false;
+}
 
 vec find_shortest(int end_x , int end_y , struct vec start)
 {
@@ -32,7 +40,7 @@ vec find_shortest(int end_x , int end_y , struct vec start)
 		A.h = end_x + end_y - A.x - A.y;
 		A.f = A.g + A.h;
 		if(A.x == end_x && A.y == end_y) return A;
-		if(!opened.count(A)){
+		if(!check(A)){
 			if(fi.empty()) fi.push_back(A);
 			else {
 				int i=fi.size()-1;
@@ -56,7 +64,7 @@ vec find_shortest(int end_x , int end_y , struct vec start)
 		B.h = end_x + end_y - B.x - B.y;
 		B.f = B.g + B.h;
 		if(B.x == end_x && B.y == end_y) return B;
-		if(!opened.count(B)){
+		if(!check(B)){
 			if(fi.empty()) fi.push_back(B);
 			else {
 				int i=fi.size()-1;
@@ -80,7 +88,7 @@ vec find_shortest(int end_x , int end_y , struct vec start)
 		C.h = end_x + end_y - C.x - C.y;
 		C.f = C.h + C.g;
 		if(C.x == end_x && C.y == end_y) return C;
-		if(!opened.count(C)){
+		if(!check(C)){
 			if(fi.empty()) fi.push_back(C);
 			else {
 				int i=fi.size()-1;
@@ -104,7 +112,7 @@ vec find_shortest(int end_x , int end_y , struct vec start)
 		D.h = end_x + end_y - D.x - D.y;
 		D.f = D.g + D.h;		
 		if(D.x == end_x && D.y == end_y) return D;
-		if(!opened.count(D)){
+		if(!check(D)){
 			if(fi.empty()) fi.push_back(D);
 			else {
 				int i=fi.size()-1;
@@ -120,7 +128,7 @@ vec find_shortest(int end_x , int end_y , struct vec start)
 		}
 	}
 	vec X = fi.back();
-	opened.insert(X);
+	opened.push_back(X);
 	fi.pop_back();
 	find_shortest(end_x , end_y , X);
 }
@@ -128,6 +136,7 @@ vec find_shortest(int end_x , int end_y , struct vec start)
 int count_step(int now_x , int now_y , int end_x , int end_y , vec root)
 {
 	fi.clear();
+	opened.clear();
 	vec X = find_shortest(end_x , end_y , root);
 	int cou=0;
 	go_back.clear();
@@ -136,7 +145,6 @@ int count_step(int now_x , int now_y , int end_x , int end_y , vec root)
 		X = *(X.last);
 		go_back.push_back(X.x);
 		go_back.push_back(X.y);
-		opened.erase(X);
 	}
 	return cou;
 }
