@@ -1,4 +1,5 @@
 #include<iostream>
+#include<fstream>
 #include<vector>
 #include<queue>
 
@@ -11,7 +12,7 @@ struct vec {
 };
 
 char map[1010][1010];
-int B_x , B_y , r , c , step;
+int B_x , B_y , r , c , step , b;
 vector<int> step_x;
 vector<int> step_y;
 vector<struct vec*> fi;
@@ -45,26 +46,40 @@ int check_fi(vec* A)
 
 vec* find_shortest(int end_x , int end_y , vec* start)
 {
-	if(start->x > 0 && start->y > 0 && start->x < r+1 && start->y < c+1){
-		if(map[start->x+1][start->y] != '1' && start->x < r){
-			vec* A = new vec;
-			A->last = start;
-			A->x = start->x+1;
-			A->y = start->y;
-			A->g = (A->last->g) + 1;
-			A->h = end_x + end_y - A->x - A->y;
-			A->f = A->g + A->h;
-			if(A->x == end_x && A->y == end_y) return A;
-			if(!check(A)){
-				if(fi.empty()) fi.push_back(A);
-				else {
-					int x = check_fi(A);
-					if(x != 0){
-						if(fi[x]->f > A->f) {
-							fi.erase(fi.begin()+x , fi.begin()+x+1);
-							int i=fi.size()-1;
+	if(map[start->x][start->y] != '1'){
+		if((start->x) > 0 && (start->y) > 0 && (start->x) < (r+1) && (start->y) < (c+1)){
+			if(map[(start->x)+1][start->y] != '1' && (start->x) < r){ //A
+				vec* A = new vec;
+				A->last = start;
+				A->x = (start->x)+1;
+				A->y = start->y;
+				A->g = (A->last->g) + 1;
+				A->h = end_x + end_y - (A->x) - (A->y);
+				if (A->h > 0) A->f = (A->g) + (A->h);
+				else A->f = (A->g) - (A->h);
+				if((A->x) == end_x && (A->y) == end_y) return A;
+				if(!check(A)){
+					if(fi.empty()) fi.push_back(A);
+					else {
+						int x = check_fi(A);
+						if(x != 0){
+							if((fi[x]->f) > (A->f)) {
+								fi.erase(fi.begin()+x , fi.begin()+x+1);
+								int i = fi.size()-1;
+								vec* X = fi[i];
+								while((X->f) < (A->f)){
+									i--;
+									if(i == -1) break;
+									else X = fi[i];
+								}
+								if(i == -1) fi.insert(fi.begin() , A);
+								else fi.insert(fi.begin()+i , A);
+							}
+						}
+						else {
+							int i = fi.size()-1;
 							vec* X = fi[i];
-							while(X->f < A->f){
+							while((X->f) < (A->f)){
 								i--;
 								if(i == -1) break;
 								else X = fi[i];
@@ -73,39 +88,40 @@ vec* find_shortest(int end_x , int end_y , vec* start)
 							else fi.insert(fi.begin()+i , A);
 						}
 					}
-					else {
-						int i=fi.size()-1;
-						vec* X = fi[i];
-						while(X->f < A->f){
-							i--;
-							if(i == -1) break;
-							else X = fi[i];
-						}
-						if(i == -1) fi.insert(fi.begin() , A);
-						else fi.insert(fi.begin()+i , A);
-					}
 				}
 			}
-		}
-		if(map[start->x-1][start->y] != '1' && start->x > 1){
-			vec* B = new vec;
-			B->last = start;
-			B->x = start->x-1;
-			B->y = start->y;
-			B->g = B->last->g + 1;
-			B->h = end_x + end_y - B->x - B->y;
-			B->f = B->g + B->h;
-			if(B->x == end_x && B->y == end_y) return B;
-			if(!check(B)){
-				if(fi.empty()) fi.push_back(B);
-				else {
-					int x = check_fi(B);
-					if(x != 0){
-						if(fi[x]->f > B->f) {
-							fi.erase(fi.begin()+x , fi.begin()+x+1);
+			if(map[(start->x)-1][start->y] != '1' && (start->x) > 1){ //B
+				vec* B = new vec;
+				B->last = start;
+				B->x = (start->x)-1;
+				B->y = start->y;
+				B->g = (B->last->g) + 1;
+				B->h = end_x + end_y - (B->x) - (B->y);
+				if(B->h > 0) B->f = (B->g) + (B->h);
+				else B->f = (B->g) - (B->h);
+				if((B->x) == end_x && (B->y) == end_y) return B;
+				if(!check(B)){
+					if(fi.empty()) fi.push_back(B);
+					else {
+						int x = check_fi(B);
+						if(x != 0){
+							if((fi[x]->f) > (B->f)) {
+								fi.erase(fi.begin()+x , fi.begin()+x+1);
+								int i = fi.size()-1;
+								vec* X = fi[i];
+								while((X->f) < (B->f)){
+									i--;
+									if(i == -1) break;
+									else X = fi[i];
+								}
+								if(i == -1) fi.insert(fi.begin() , B);
+								else fi.insert(fi.begin()+i , B);
+							}
+						}
+						else {
 							int i=fi.size()-1;
 							vec* X = fi[i];
-							while(X->f < B->f){
+							while((X->f) < (B->f)){
 								i--;
 								if(i == -1) break;
 								else X = fi[i];
@@ -114,39 +130,40 @@ vec* find_shortest(int end_x , int end_y , vec* start)
 							else fi.insert(fi.begin()+i , B);
 						}
 					}
-					else {
-						int i=fi.size()-1;
-						vec* X = fi[i];
-						while(X->f < B->f){
-							i--;
-							if(i == -1) break;
-							else X = fi[i];
-						}
-						if(i == -1) fi.insert(fi.begin() , B);
-						else fi.insert(fi.begin()+i , B);
-					}
 				}
 			}
-		}
-		if(map[start->x][start->y+1] != '1' && start->y < c){
-			vec* C = new vec;
-			C->last = start;
-			C->x = start->x;
-			C->y = start->y+1;
-			C->g = C->last->g + 1;
-			C->h = end_x + end_y - C->x - C->y;
-			C->f = C->h + C->g;
-			if(C->x == end_x && C->y == end_y) return C;
-			if(!check(C)){
-				if(fi.empty()) fi.push_back(C);
-				else {
-					int x = check_fi(C);
-					if(x != 0){
-						if(fi[x]->f > C->f) {
-							fi.erase(fi.begin()+x , fi.begin()+x+1);
+			if(map[start->x][(start->y)+1] != '1' && (start->y) < c){ //C
+				vec* C = new vec;
+				C->last = start;
+				C->x = start->x;
+				C->y = (start->y)+1;
+				C->g = (C->last->g) + 1;
+				C->h = end_x + end_y - (C->x) - (C->y);
+				if(C->h > 0) C->f = (C->h) + (C->g);
+				else C->f = (C->g) - (C->h);
+				if(C->x == end_x && C->y == end_y) return C;
+				if(!check(C)){
+					if(fi.empty()) fi.push_back(C);
+					else {
+						int x = check_fi(C);
+						if(x != 0){
+							if((fi[x]->f) > (C->f)) {
+								fi.erase(fi.begin()+x , fi.begin()+x+1);
+								int i=fi.size()-1;
+								vec* X = fi[i];
+								while((X->f) < (C->f)){
+									i--;
+									if(i == -1) break;
+									else X = fi[i];
+								}
+								if(i == -1) fi.insert(fi.begin() , C);
+								else fi.insert(fi.begin()+i , C);
+							}
+						}
+						else {
 							int i=fi.size()-1;
 							vec* X = fi[i];
-							while(X->f < C->f){
+							while((X->f) < (C->f)){
 								i--;
 								if(i == -1) break;
 								else X = fi[i];
@@ -155,39 +172,40 @@ vec* find_shortest(int end_x , int end_y , vec* start)
 							else fi.insert(fi.begin()+i , C);
 						}
 					}
-					else {
-						int i=fi.size()-1;
-						vec* X = fi[i];
-						while(X->f < C->f){
-							i--;
-							if(i == -1) break;
-							else X = fi[i];
-						}
-						if(i == -1) fi.insert(fi.begin() , C);
-						else fi.insert(fi.begin()+i , C);
-					}
 				}
 			}
-		}
-		if(map[start->x][start->y-1] != '1' && start->y > 1){
-			vec* D = new vec;
-			D->last = start;
-			D->x = start->x-1;
-			D->y = start->y;
-			D->g = D->last->g + 1;
-			D->h = end_x + end_y - D->x - D->y;
-			D->f = D->g + D->h;		
-			if(D->x == end_x && D->y == end_y) return D;
-			if(!check(D)){
-				if(fi.empty()) fi.push_back(D);
-				else {
-					int x = check_fi(D);
-					if(x != 0){
-						if(fi[x]->f > D->f) {
-							fi.erase(fi.begin()+x , fi.begin()+x+1);
+			if(map[start->x][(start->y)-1] != '1' && (start->y) > 1){ //D
+				vec* D = new vec;
+				D->last = start;
+				D->x = start->x;
+				D->y = (start->y)-1;
+				D->g = (D->last->g) + 1;
+				D->h = end_x + end_y - (D->x) - (D->y);
+				if(D->h > 0) D->f = (D->g) + (D->h);
+				else D->f = (D->g) - (D->h);
+				if(D->x == end_x && D->y == end_y) return D;
+				if(!check(D)){
+					if(fi.empty()) fi.push_back(D);
+					else {
+						int x = check_fi(D);
+						if(x != 0){
+							if((fi[x]->f) > (D->f)) {
+								fi.erase(fi.begin()+x , fi.begin()+x+1);
+								int i=fi.size()-1;
+								vec* X = fi[i];
+								while((X->f) < (D->f)){
+									i--;
+									if(i == -1) break;
+									else X = fi[i];
+								}
+								if(i == -1) fi.insert(fi.begin() , D);
+								else fi.insert(fi.begin()+i , D);
+							}
+						}
+						else {
 							int i=fi.size()-1;
 							vec* X = fi[i];
-							while(X->f < D->f){
+							while((X->f) < (D->f)){
 								i--;
 								if(i == -1) break;
 								else X = fi[i];
@@ -196,38 +214,25 @@ vec* find_shortest(int end_x , int end_y , vec* start)
 							else fi.insert(fi.begin()+i , D);
 						}
 					}
-					else {
-						int i=fi.size()-1;
-						vec* X = fi[i];
-						while(X->f < D->f){
-							i--;
-							if(i == -1) break;
-							else X = fi[i];
-						}
-						if(i == -1) fi.insert(fi.begin() , D);
-						else fi.insert(fi.begin()+i , D);
-					}
 				}
 			}
-		}
-		vec* X = fi.back();
-		opened.push_back(X);
-		fi.pop_back();
-cout << X->x-1 << ' ' << X->y-1 << "f=" << X->f << '\n';
-		find_shortest(end_x , end_y , X);
-	}
-	else {
-		if(fi.empty()){
-			vec* Y;
-			cout << "find shortest failed";
-			return Y;
-		}
-		else {
 			vec* X = fi.back();
 			opened.push_back(X);
 			fi.pop_back();
-cout << X->x-1 << ' ' << X->y-1 << "nf=" << X->f << '\n';
 			find_shortest(end_x , end_y , X);
+		}
+		else { //out of the map
+			if(fi.empty()){
+				vec* Y;
+				cout << "find shortest failed";
+				return Y;
+			}
+			else {
+				vec* X = fi.back();
+				opened.push_back(X);
+				fi.pop_back();
+				find_shortest(end_x , end_y , X);
+			}
 		}
 	}
 }
@@ -238,7 +243,6 @@ int count_step(int now_x , int now_y , int end_x , int end_y , vec* root)
 	opened.clear();
 	opened.push_back(root);
 	vec* X = find_shortest(end_x , end_y , root);
-cout << X->x-1 << ' ' << X->y-1 << "moveto?" << '\n';
 	int cou=0;
 	go_back.clear();
 	while(1){
@@ -255,18 +259,30 @@ void moveto()
 {
 	while(!go_back.empty()){
 		step++;
+		b++;
 		step_y.push_back(go_back.back());
 		go_back.pop_back();
 		step_x.push_back(go_back.back());
 		go_back.pop_back();
-cout << "moveto" << step_x.back() << ' ' << step_y.back() << '\n';
 	}
 	return;
 }	
 
  int main(int argc , char *argv[])
  {
-	 int b;
+ 	
+ 	ifstream fin;
+	ofstream fout;
+
+	string in_com , out_com;
+	in_com = "./";
+	in_com += argv[1];
+	out_com = in_com;
+	in_com += "/floor.data";
+	out_com += "/final.path";
+	fin.open(in_com);
+	fout.open(out_com);
+	
 	 int B;
 	 int direction=0;
 	 int need_clear=0;
@@ -302,23 +318,20 @@ cout << "moveto" << step_x.back() << ' ' << step_y.back() << '\n';
 			root->y = now_y;
 			root->g = 0;
 			root->h = B_x + B_y - now_x - now_y;
-			root->f = root->g + root->h;
+			if(root->h > 0) root->f = root->g + root->h;
+			else root->f = root->g - root->h;
 			int x = count_step(now_x , now_y , B_x , B_y , root);
-cout << "had run" << b << ' ' << x << "steps" << '\n';
-			if(x+b <= B && x+b > B-3) {
+			if(x+b <= B && x+b > B-2) {
 				moveto();
 				int i=step-2;
-				while(step_x.back() != now_x && step_y.back() != now_y){
+				while(x--){
 					step++;
+					b++;
 					step_y.push_back(step_y[i]);
 					step_x.push_back(step_x[i]);
-cout << "moveback" << step_x[i]-1 << ' ' << step_y[i]-1 << '\n';
 					i--;
 				}
-				b = 0;
-				step_x.push_back(now_x);
-				step_y.push_back(now_y);
-				step++;
+				b = x;
 			}
 		}
 		if(map[now_x-1][now_y]!='0' && map[now_x+1][now_y]!='0' && map[now_x][now_y-1]!='0' && map[now_x][now_y+1]!='0'){
@@ -327,7 +340,8 @@ cout << "moveback" << step_x[i]-1 << ' ' << step_y[i]-1 << '\n';
 			root->y = now_y;
 			root->g = 0;
 			root->h = B_x + B_y - now_x - now_y;
-			root->f = root->g + root->h;
+			if(root->h > 0) root->f = root->g + root->h;
+			else root->f = root->g - root->h;
 			int x = count_step(now_x , now_y , B_x , B_y , root);
 			moveto();
 			b = 0;
@@ -343,7 +357,8 @@ cout << "moveback" << step_x[i]-1 << ' ' << step_y[i]-1 << '\n';
 			root->y = B_y;
 			root->g = 0;
 			root->h = next_x + next_y - B_x - B_y;
-			root->f = root->g + root->h;
+			if(root->h > 0) root->f = root->g + root->h;
+			else root->f = root->g - root->h;
 			x = count_step(B_x , B_y , next_x , next_y , root);
 			moveto();
 			now_x = next_x;
@@ -366,7 +381,6 @@ cout << "moveback" << step_x[i]-1 << ' ' << step_y[i]-1 << '\n';
 				step_x.push_back(now_x);
 				step_y.push_back(now_y);
 				step++;
-cout << now_x-1 << ' ' << now_y-1 << '\n';
 				b++;
 				need_clear--;
 			}
@@ -379,7 +393,6 @@ cout << now_x-1 << ' ' << now_y-1 << '\n';
 				step_x.push_back(now_x);
 				step_y.push_back(now_y);
 				step++;
-cout << now_x-1 << ' ' << now_y-1 << '\n';
 				b++;
 				need_clear--;
 			}
@@ -391,7 +404,6 @@ cout << now_x-1 << ' ' << now_y-1 << '\n';
 				step_x.push_back(now_x);
 				step_y.push_back(now_y);
 				step++;
-cout << now_x-1 << ' ' << now_y-1 << '\n';
 				b++;
 				need_clear--;
 			}
@@ -404,7 +416,6 @@ cout << now_x-1 << ' ' << now_y-1 << '\n';
 				step_x.push_back(now_x);
 				step_y.push_back(now_y);
 				step++;
-cout << now_x-1 << ' ' << now_y-1 << '\n';
 				b++;
 				need_clear--;
 			}
@@ -416,7 +427,6 @@ cout << now_x-1 << ' ' << now_y-1 << '\n';
 				step_x.push_back(now_x);
 				step_y.push_back(now_y);
 				step++;
-cout << now_x-1 << ' ' << now_y-1 << '\n';
 				b++;
 				need_clear--;
 				if(wall_at_right) {
@@ -455,7 +465,6 @@ cout << now_x-1 << ' ' << now_y-1 << '\n';
 				step_x.push_back(now_x);
 				step_y.push_back(now_y);
 				step++;
-cout << now_x-1 << ' ' << now_y-1 << '\n';
 				b++;
 				need_clear--;
 				if(wall_at_right) {
@@ -489,7 +498,6 @@ cout << now_x-1 << ' ' << now_y-1 << '\n';
 				step_x.push_back(now_x);
 				step_y.push_back(now_y);
 				step++;
-cout << now_x-1 << ' ' << now_y-1 << '\n';
 				b++;
 				need_clear--;
 				if(wall_at_right) {
@@ -523,7 +531,6 @@ cout << now_x-1 << ' ' << now_y-1 << '\n';
 				step_x.push_back(now_x);
 				step_y.push_back(now_y);
 				step++;
-cout << now_x-1 << ' ' << now_y-1 << '\n';
 				b++;
 				need_clear--;
 				if(wall_at_right) {
@@ -551,11 +558,23 @@ cout << now_x-1 << ' ' << now_y-1 << '\n';
 			}
 		}
 	}
-cout << "finish" << '\n'; 
-	 cout << step << endl;
-	 for(int i=0 ; i<step ; i++){
-		 cout << step_x[i] << ' ';
-		 cout << step_y[i] << endl; 
-	 }
-     return 0;
+	
+	vec* root = new vec;
+	root->x = step_x.back();
+	root->y = step_y.back();
+	root->g = 0;
+	root->h = B_x + B_y - root->x - root->y;
+	if(root->h > 0) root->f = root->g + root->h;
+	else root->f = root->g - root->h;
+	int x = count_step(step_x.back() , step_y.back() , B_x , B_y , root);
+	moveto();
+	
+	fout << step << endl;
+	for(int i=0 ; i<step ; i++){
+		fout << step_x[i]-1 << ' ';
+	 	fout << step_y[i]-1 << endl; 
+	}
+	fin.close();
+    fout.close();
+    return 0;
  }
